@@ -1,0 +1,99 @@
+**Lakkit**
+Lakkit is new, free and open-source server software focused on safety and performance. It's written in NodeJS, fast and flexible language.
+
+**Documentation**
+
+**Server**
+libs (const dictionary) - dictionary with libs so plugins doesn't have to load them again
+IP (const string/undefined) - address that is server running on. If undefined, then server will listen all IP addresses. Default: undefined
+port (const int/undefined)- port that is server running on. Default: 25565
+worlds (array of World)- array of loaded worlds
+plugins (array of strings) - array of loaded plugins
+version (const string) - version that is server running
+defaultWorld (string)
+onlineMode
+encryption
+
+start() - starts the server
+stop() - stops the server
+
+loadPlugin(plugin_name) - loads plugin from ./plugins
+unloadPlugin(plugin_name) - unloads plugin
+loadWorld(world_name) - loads world from ./worlds
+unloadWorld(world_name) - unloads world
+
+deleteWorld(world_name) - unloads world and delets files
+
+**World**
+time (integer, in ticks) - time in world
+seed (integer) - seed of world
+difficulty (integer) 0 peaceful, 1 easy, 2 normal, 3 hard
+generator (Generator) - world generator
+chunks (dictionary of Chunk) - key: "[0, 0]" value: Chunk object
+
+**Chunk**
+data
+entities
+
+**Generator**
+
+**Gamemode**
+static enum Gamemode
+{
+	Survival, Adventure, Creative, Spectator
+}
+
+**Entity**
+static enum Type
+{
+	Player, /*all types of mobs*/
+
+}
+entityId - id of entity
+health (integer) - health of entity (default: 20)
+type (from enum Entity.Type) - type of entity
+attackDamage
+attackSpeed
+movementSpeed
+flyingSpeed
+position (array) - x,y,z array
+rotation (array) - yaw, pitch
+onGround (boolean)
+
+**Player** (includes Entity)
+name (string) - name of player
+uuid (string) - uuid of player
+gamemode (from enum Gamemode)
+client - used to low-level communication (packets, etc.). More info: https://www.npmjs.com/package/minecraft-protocol
+hunger (integer) - hunger of player (default: 20)
+heldSlotId (integer) - id of current selected slot
+inventory (Inventory) - inventory of player
+send(message) - sends message to player
+kick(reason) - kicks player with reason
+
+**Inventory**
+constructor(size)
+data - array with Slots, undefined means empty slot
+size - count of slots
+
+**Slot**
+constructor(present, itemId, itemCount, NBT)
+present
+itemId
+itemCount
+NBT
+
+See more: https://wiki.vg/Slot_Data
+
+**Console**
+send(message) - sends message to console
+logger(ID, message) - logs message
+
+**Utils**
+colored(message) - returns message colored
+coloredForConsole(message)- returns message colored with bash colors
+
+__**For API**__
+**Event**
+cancelled (boolean)
+data (dictionary of data)

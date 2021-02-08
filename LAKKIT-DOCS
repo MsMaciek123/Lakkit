@@ -1,0 +1,70 @@
+> __**Chapter I - Basics**__
+To create **Lakkit Plugin**, you need create class that **extends Plugin class**.
+At first we need import Plugin class.
+
+```js
+const Plugin = require('./../libs/plugin')
+```
+
+then, create class for your plugin
+
+```js
+class PluginName extends Plugin { }
+```
+
+Then we have to export our plugin. Let's do this by adding one line at end of the code
+```js
+module.exports = PluginName
+```
+
+Whole code:
+```js
+const Plugin = require('./../libs/plugin')
+class PluginName extends Plugin
+{
+	// our code that we will write soon
+}
+module.exports = PluginName
+```
+
+Now, let's start with onEnable and onDisable events. They're very easy to create. Just create functions named `onEnable` and `onDisable`. They **must be static** - otherwise won't work.
+
+```js
+static onEnable(_server)
+{
+	console.log('Our plugin is enabled and working correctly!')
+	server = _server
+}
+```
+*(we don't write 'function onEnable', because it's inside class)*
+
+**What's happening here?**
+To onEnable event is passing instance of server. This instance allows us to get informations about it (players, worlds etc.).
+We have to save it, Lakkit won't send it anymore. We highly recommend to create global variable called server.
+
+Add
+```js
+var server = undefined
+```
+at top of your file
+
+There we go, your plugin is working as expected!
+
+> __**Chapter II - Connecting with MinecraftData and MinecraftProtocol**__
+To use low-level API, we have to import MinecraftData and MinecraftProtocol. They're so useful.
+MinecraftProtcol can be imported on top of file.
+```js
+const minecraftProtocol = require('minecraft-protocol')
+```
+But to use MinecraftData we need specify version. Because your plugin may runs on other version that you except, you should always take version from `server.version`.
+Create global empty variable for MinecraftData at top of file
+```js
+var minecraftData = ''
+```
+And in onEnable event, let's add this line:
+```js
+minecraftData = require('minecraft-data')(server.version)
+```
+It imports MinecraftData with server's version
+
+> __**Chapter III - Import Lakkit API (not finished yet)**__

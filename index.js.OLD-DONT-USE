@@ -1,0 +1,279 @@
+console.log('Loading libraries')
+let entities = { players: {} }
+let players = []
+const version = '1.16.2'
+
+const { performance } = require('perf_hooks');
+const API = require('./libs/api')
+//const API = require('./libs/serverbrand')
+const mc = require('minecraft-protocol')
+const Chunk = require('prismarine-chunk')(version)
+const Vec3 = require('vec3')
+const server = mc.createServer({
+	'online-mode': false,
+	encryption: false,
+	host: 'localhost',
+	port: 25565,
+	version: version,
+	motd: 'Server is starting...'
+})
+
+const mcData = require('minecraft-data')(version)
+const loginPacket = mcData.loginPacket
+const chunk = new Chunk()
+
+function getRandomInt(minn, maxx) {
+			minn = Math.ceil(minn);
+			maxx = Math.floor(maxx);
+			return Math.floor(Math.random() * (maxx - minn)) + minn;
+		}
+
+function mapchunk(client, xLOC, zLOC)
+{
+	let block = mcData.blocksByName.grass_block.id;
+	for (let x = 0; x < 16; x++) {
+		for (let z = 0; z < 16; z++) {
+			chunk.setBlockType(new Vec3(x, 100, z), block)
+			chunk.setBlockData(new Vec3(x, 100, z), 1)
+			for (let y = 0; y < 256; y++) {
+				chunk.setSkyLight(new Vec3(x, y, z), 15)
+			}
+		}
+	}
+
+	client.write('map_chunk', {
+		x: xLOC,
+		z: zLOC,
+		groundUp: true,
+		biomes: chunk.dumpBiomes !== undefined ? chunk.dumpBiomes() : undefined,
+		heightmaps: {
+			type: 'compound',
+			name: '',
+			value: {
+				MOTION_BLOCKING: { type: 'longArray', value: new Array(36).fill([0, 0]) }
+			}
+		}, // send fake heightmap
+		bitMap: chunk.getMask(),
+		chunkData: chunk.dump(),
+		blockEntities: []
+	})
+}
+
+function logIt(message)
+{
+	console.log(`${Date.now()} ${message}`)
+}
+
+
+/*server.on('connection', function (client) {
+	logIt(`[CONNECT] ${client.socket.remoteAddress} send signal (probably ping)`)
+})*/
+
+server.on('login', function (client) {
+	
+	logIt(`[LOGIN] ${client.username} attempt to join [IP ${client.socket.remoteAddress}] [UUID ${client.uuid}]${premiumProfile}`);
+	
+	let count = 0;
+	for(id in server.clients) {
+		if(client.username == server.clients[id].username) {
+			count += 1;
+			if(count == 2) {
+				logIt(`[LOGIN] ${client.username} failed to login because username is already taken`);
+				client.end('§cThis username is already taken');
+				return;
+			}
+		}
+	}
+	
+	client.write('login', {
+		entityId: client.id,
+		isHardcore: false,
+		gameMode: 1,
+		previousGameMode: 255,
+		worldNames: loginPacket.worldNames,
+		dimensionCodec: loginPacket.dimensionCodec,
+		dimension: loginPacket.dimension,
+		worldName: 'minecraft:overworld',
+		hashedSeed: [0, 0],
+		maxPlayers: server.maxPlayers,
+		viewDistance: 10,
+		reducedDebugInfo: false,
+		enableRespawnScreen: true,
+		isDebug: false,
+		isFlat: false
+	})
+	
+	
+	
+	mapchunk(client, 0, 0);
+	
+	client.write('position', {
+		x: 15,
+		y: 101,
+		z: 15,
+		yaw: 137,
+		pitch: 0,
+		flags: 0x00
+	})
+	console.log(client)
+	
+	/*client.write('playerlistheaderandfooter', {
+		Header: '{"text":"test"}',
+		Footer: '{"text":"test"}'
+	})*/
+	
+	player = new API.entities.player(client)
+	
+	players.push(player)
+	console.log(`Player buffor: ${players}`, players)
+	
+	API.brandname.send(player, '\x06lakkit')
+	
+	logIt(`[LOGIN] ${player.client.username} joined the game`);
+	// Use API to do something faster :D
+	API.message.broadcast(server, `§e${player.client.username} joined the game.`);
+	
+	// Spawn player packet
+	for(id in server.clients) { //if(server.clients[id].id == client.id) { continue }
+		server.clients[id].write('player_info', {
+			action: 0,
+			data: [
+				{
+					UUID: client.uuid,
+					name: client.username,
+					properties: [ ],
+					gamemode: 0,
+					ping: -1 // not implemented!
+				}
+			]
+		})
+		
+		if(server.clients[id].id == client.id) { continue }
+		
+		client.write('player_info', {
+			action: 0,
+			data: [
+				{
+					UUID: server.clients[id].uuid,
+					name: server.clients[id].username,
+					properties: [ ],
+					gamemode: 0,
+					ping: -1 // not implemented!
+				}
+			]
+		})
+		
+		/*server.clients[id].write('spawn_player', {
+			entityId: client.id,
+			playerUUID: client.uuid,
+			x: 15,
+			y: 101,
+			z: 15,
+			yaw: 137,
+			pitch: 0
+		})*/
+	
+	}
+	
+	// Chat
+	client.on('chat', function (packet) {
+		mapchunk(client, 0, 0);
+		// Check if it's command
+		if(packet.message.startsWith('/')) { handleCommand(client, packet); return; }
+		
+		// Create message object and stringify it so we can send it
+		let msg = JSON.stringify({ translate: `${client.username}: ${packet.message}` })
+		
+		// Loop all clients and send message
+		for(id in server.clients) { server.clients[id].write('chat', { message: msg, position: 0, sender: '0' }) }
+	})
+	
+	client.on('position', function (packet) {
+		// Calculate in what chunk player is
+		x = packet['x']/16
+		z = packet['z']/16
+		// Change -0 to -1
+		if(x<0) x-=1
+		if(z<0) z-=1
+		
+		mapchunk(client, parseInt(x)-2, parseInt(z))
+		mapchunk(client, parseInt(x)+1, parseInt(z))
+		mapchunk(client, parseInt(x)-1, parseInt(z))
+		mapchunk(client, parseInt(x), parseInt(z))
+		mapchunk(client, parseInt(x)+1, parseInt(z))
+		mapchunk(client, parseInt(x), parseInt(z)-1)
+		mapchunk(client, parseInt(x), parseInt(z)+1)
+		mapchunk(client, parseInt(x), parseInt(z)-2)
+		mapchunk(client, parseInt(x), parseInt(z)+2)
+	})
+	
+	client.on('end', function (packet) {
+		logIt(`[DISCONNECT] ${client.username} disconnected`);
+		
+		// Remove user from tab
+		for(id in server.clients)
+		{
+			server.clients[id].write('player_info', {
+				action: 4,
+				data: [
+					{
+						UUID: client.uuid,
+						name: client.username//,
+						//properties: [ ],
+						//gamemode: 0,
+						//ping: -1 // not implemented!
+					}
+				]
+			})
+		}
+		
+		let msg = JSON.stringify({ translate: `§e${client.username} left the game.` })
+	for(id in server.clients) { server.clients[id].write('chat', { message: msg, position: 0, sender: '0' }) }
+	})
+
+})
+
+function handleCommand(client, packet)
+{
+	function out(c, msg) { c.write('chat', { message: JSON.stringify({ translate: msg }), position: 0, sender: '0' }); }
+	
+	if(packet.message == '/help' || packet.message.startsWith('/help '))
+	{
+		out(client, '--- Help ---\n/ver - shows server\'s version\n/ram - check memory ussage\n/gc - force gc\n--- Help ---')
+	} else if (packet.message == '/ver' || packet.message.startsWith('/ver '))
+	{
+		out(client, 'This server is running lakkit 1.0v')
+	} else if (packet.message == '/ram' || packet.message.startsWith('/ram '))
+	{
+		let used = process.memoryUsage();
+		for (let key in used) {
+			out(client, `${key} ${Math.round(used[key] / 1024 / 1024 * 100) / 100} MB`);
+		}
+	} else if (packet.message == '/gc' || packet.message.startsWith('/gc '))
+	{
+		out(client, 'Running GC...')
+		try
+		{
+			if(global.gc)
+			{
+				let t1 = performance.now();
+				global.gc();
+				let t2 = performance.now();
+				out(client, `GC done in ${Math.round(t2-t1)} miliseconds!`)
+			}
+			else out(client, 'GC is not supported (running without --expose-gc)')
+		} catch (e) {
+			out(client, 'Internal Error! (see console)')
+			logIt(`Internal error while performing GC: ${e}`)
+		}
+
+	}
+	else
+	{
+		out(client, 'No command found!')
+	}
+	
+}
+
+server.motd = 'Server is running lakkit 1.0v beta';
+console.log('Server started!');

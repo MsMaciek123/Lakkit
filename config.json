@@ -1,0 +1,17 @@
+{
+	"comment": "Numbers have to be inside quotation marks",
+	"main": {
+		"maxPlayers": "2020",
+		"IP": "83.10.130.214",
+		"port": "25565",
+		"worldName": "notImplemented",
+		"viewDistance": "4",
+		"onlineMode": false,
+		"encryption": false,
+		"motd": "This is lakkit!"
+	},
+	"messages": {
+		"maxPlayers": "Sorry, but max players has got reached. Try again later!",
+		"unknownCommand": "Unknown command. Type \"/help\" for help."
+	}
+}

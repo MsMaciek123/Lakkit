@@ -1,0 +1,48 @@
+const Vec3 = require('vec3')
+function calculateLocation(x, z)
+{
+	let xl = x/16
+	let zl = z/16
+	// Change -0 to -1
+	if(xl<0) xl-=1
+	if(zl<0) zl-=1
+	
+	return({x: parseInt(xl), z: parseInt(zl)})
+}
+
+function atLocation(server, x, z)
+{
+	return(server.chunks[id(x,z)])
+}
+
+function id(x, z)
+{
+	return JSON.stringify([x,z])
+}
+
+function createExampleChunk(server, block, _x, _z)
+{
+		const chunk = new server.libraries['prismarine-chunk']()
+		const Noise = require('noisejs')
+		var noise = new Noise.Noise(25)
+		for(let x=0; x<16; x++)
+		{
+			for(let z=0; z<16; z++)
+			{
+				for(let y = 0; y < 16; y++)
+				{
+					chunk.setBlockType(new Vec3(x, y, z), 8) 
+					chunk.setBlockData(new Vec3(x, y, z), 1)
+				}
+				
+				for(let y=0; y<256; y++)
+					{
+						chunk.setSkyLight(new Vec3(x,y,z), 15) //was 15
+					}
+			}
+		}
+
+		return(chunk)
+}
+
+module.exports = { createExampleChunk, calculateLocation, atLocation, id }  

@@ -1,0 +1,21 @@
+{
+  "name": "lakkit",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "nodemon server.js"
+  },
+  "author": "MsMaciek#9399",
+  "license": "ISC",
+  "dependencies": {
+    "minecraft-protocol": "^1.22.0",
+    "nodemon": "^2.0.7",
+    "noisejs": "^2.1.0",
+    "performance": "^1.4.0",
+    "perlin-noise-3d": "^0.5.4",
+    "prismarine-chunk": "^1.22.0",
+    "prompt-sync": "^4.2.0",
+    "proxycheck-node.js": "^2.0.0-a"
+  }
+}
