@@ -11,7 +11,7 @@ module.exports = function(server, player, packet)
 		player.sendPacketNearby('entity_metadata', {
 			entityId: player.entityId,
 			metadata:
-			{ 0: { key: 6, type: 18, value: 3 } }
+			{ 0: { key: 6, type: 18, value: 5 } }
 		}, true)
 	}
 	else if(packet.actionId == 1) // stop sneaking (back to normal position?)

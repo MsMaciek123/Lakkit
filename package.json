@@ -4,20 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "nodemon server.js",
+    "test": "node server.js",
     "start": "node server.js"
   },
   "author": "MsMaciek#9399",
   "license": "ISC",
   "dependencies": {
-    "axios": "^0.21.1",
     "minecraft-protocol": "^1.23.1",
-    "nodemon": "^2.0.7",
     "noisejs": "^2.1.0",
-    "performance": "^1.4.0",
     "perlin-noise-3d": "^0.5.4",
-    "prismarine-chunk": "^1.22.0",
-    "prompt-sync": "^4.2.0",
-    "proxycheck-node.js": "^2.0.0-a"
+    "prismarine-chunk": "^1.22.0"
   }
 }

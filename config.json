@@ -2,7 +2,7 @@
 	"comment": "Numbers have to be inside quotation marks",
 	"main": {
 		"maxPlayers": "2020",
-		"IP": "83.10.56.250",
+		"IP": "",
 		"port": "25565",
 		"worldName": "notImplemented",
 		"viewDistance": "4",
