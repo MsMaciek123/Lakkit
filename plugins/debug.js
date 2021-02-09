@@ -92,7 +92,7 @@ class PluginDebug extends Plugin
 			
 			let LocChunk = API.chunks.calculateLocation(correctLocation.x, correctLocation.z)
 			
-			//server.chunks[API.chunks.id(LocChunk.x, LocChunk.z)].setBlockType(new Vec3(correctLocation.x-(LocChunk.x*16), correctLocation.y, correctLocation.z-(LocChunk.z*16)), blockStateId)
+			server.chunks[API.chunks.id(LocChunk.x, LocChunk.z)].setBlockType(new Vec3(correctLocation.x-(LocChunk.x*16), correctLocation.y, correctLocation.z-(LocChunk.z*16)), 0)
 			server.chunks[API.chunks.id(LocChunk.x, LocChunk.z)].setBlockData(new Vec3(correctLocation.x-(LocChunk.x*16), correctLocation.y, correctLocation.z-(LocChunk.z*16)), blockStateId)
 		} catch (e) {
 			player.client.write('block_change',

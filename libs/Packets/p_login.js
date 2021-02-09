@@ -3,12 +3,6 @@ module.exports = function(server, player)
 	player.entityId += 1
 	player.client.entityId += 1
 	let API = server.libraries.API
-	player.client.write('update_time',
-	{
-		age: [0, 0],
-		time: [0, API.time.get(server)]
-	})
-	
 	let loginPacket = server.libraries['minecraft-data'].loginPacket
 	player.gamemode = 1; 
 	
@@ -62,6 +56,12 @@ module.exports = function(server, player)
 			sendChunk(player, chunk, x, z)
 		}
 	}
+	
+	player.client.write('update_time',
+	{
+		age: [0, 0],
+		time: [0, API.time.get(server)]
+	})
 	
 	// start position, TODO: get from world
 	player.position.x = 15
