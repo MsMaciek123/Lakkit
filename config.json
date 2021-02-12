@@ -5,7 +5,7 @@
 		"IP": "",
 		"port": "25565",
 		"worldName": "notImplemented",
-		"viewDistance": "8",
+		"viewDistance": "4",
 		"onlineMode": false,
 		"encryption": false,
 		"motd": "This is lakkit!"

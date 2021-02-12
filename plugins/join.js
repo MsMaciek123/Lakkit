@@ -22,6 +22,8 @@ class PluginJoin extends Plugin
 	static onJoin(player)
 	{
 		API.logger(0, `[${pluginName}] Plugin macka mowi, ze ktos dolaczyl z ip ${player.client.socket}`)
+		for(let i = 0; i < server.entities.player.length; i++)
+		API.message.send(server.entities.player[i], `${player.client.username} joined the game!`)
 	}
 
 }
