@@ -8,7 +8,7 @@ module.exports = function(server, player, packet)
 	// help function
 	function sendChunk(player, chunk, xl, zl)
 	{
-		if(server.chunks[API.chunks.id(xl, zl)] == undefined) { server.chunks[API.chunks.id(xl, zl)] = API.chunks.createExampleChunk(server, server.libraries['minecraft-data'].blocksByName.grass_block.id, xChunkNow, zChunkNow);}
+		if(server.chunks[API.chunks.id(xl, zl)] == undefined) { server.chunks[API.chunks.id(xl, zl)] = API.chunks.chunkAt(server, server.libraries['minecraft-data'].blocksByName.grass_block.id, xChunkNow, zChunkNow);}
 		chunk = API.chunks.atLocation(server, xl, zl)
 		player.client.write('map_chunk', {
 			x: xl,
@@ -54,13 +54,13 @@ module.exports = function(server, player, packet)
 	/*if(xChunkLast != xChunkNow || zChunkLast != zChunkNow)
 	{
 		console.log(xChunkLast, xChunkNow, zChunkLast, zChunkNow)
-		let chunk = API.chunks.createExampleChunk(server, server.libraries['minecraft-data'].blocksByName.grass_block.id)
+		let chunk = API.chunks.chunkAt(server, server.libraries['minecraft-data'].blocksByName.grass_block.id)
 		sendChunk(player, chunk, xChunkNow, zChunkNow)
 	}*/
 	
 	function updateViewPosition(player, x, z)
 	{
-		sendChunk(player, API.chunks.createExampleChunk(server, server.libraries['minecraft-data'].blocksByName.grass_block.id), x, z)
+		//sendChunk(player, API.chunks.chunkAt(server, server.libraries['minecraft-data'].blocksByName.grass_block.id), x, z)
 		player.client.write('update_view_position', {
 			chunkX: x,
 			chunkZ: z
@@ -70,25 +70,25 @@ module.exports = function(server, player, packet)
 	const i = 1
 	if(xChunkLast < xChunkNow)
 	{
-		let chunk = API.chunks.createExampleChunk(server, server.libraries['minecraft-data'].blocksByName.grass_block.id, xChunkNow, zChunkNow)
+		//let chunk = API.chunks.chunkAt(server, server.libraries['minecraft-data'].blocksByName.grass_block.id, xChunkNow, zChunkNow)
 		for(let j=0; j<=server.viewDistance; j++)
-		{ sendChunk(player, chunk, xChunkNow+j, zChunkNow-server.viewDistance+j) }
+		{ sendChunk(player, API.chunks.chunkAt(server, xChunkNow+j, zChunkNow-server.viewDistance+j), xChunkNow+j, zChunkNow-server.viewDistance+j) }
 		
 		for(let j=0; j<server.viewDistance; j++)
-		{ sendChunk(player, chunk, xChunkNow+j, zChunkNow+server.viewDistance-j) }
+		{ sendChunk(player, API.chunks.chunkAt(server, xChunkNow+j, zChunkNow-server.viewDistance-j), xChunkNow+j, zChunkNow+server.viewDistance-j) }
 		
 		updateViewPosition(player, xChunkNow, zChunkNow)
 	}
 	
 	if(xChunkLast > xChunkNow)
 	{
-		let chunk = API.chunks.createExampleChunk(server, server.libraries['minecraft-data'].blocksByName.grass_block.id, xChunkNow, zChunkNow)
+		//let chunk = API.chunks.chunkAt(server, server.libraries['minecraft-data'].blocksByName.grass_block.id, xChunkNow, zChunkNow)
 		for(let j=0; j<=server.viewDistance; j++)
-		{ sendChunk(player, chunk, xChunkNow-j, zChunkNow-server.viewDistance+j) }
+		{ sendChunk(player, API.chunks.chunkAt(server, xChunkNow-j, zChunkNow-server.viewDistance+j), xChunkNow-j, zChunkNow-server.viewDistance+j) }
 		
 		for(let j=0; j<server.viewDistance; j++)
 		{
-			sendChunk(player, chunk, xChunkNow-j, zChunkNow+server.viewDistance-j)
+			sendChunk(player, API.chunks.chunkAt(server, xChunkNow-j, zChunkNow+server.viewDistance-j), xChunkNow-j, zChunkNow+server.viewDistance-j)
 		}
 		
 		updateViewPosition(player, xChunkNow, zChunkNow)
@@ -96,24 +96,24 @@ module.exports = function(server, player, packet)
 	
 	if(zChunkLast < zChunkNow)
 	{
-		let chunk = API.chunks.createExampleChunk(server, server.libraries['minecraft-data'].blocksByName.grass_block.id, xChunkNow, zChunkNow)
+		//let chunk = API.chunks.chunkAt(server, server.libraries['minecraft-data'].blocksByName.grass_block.id, xChunkNow, zChunkNow)
 		for(let j=0; j<=server.viewDistance; j++)
-		{ sendChunk(player, chunk, xChunkNow-server.viewDistance+j, zChunkNow+j) }
+		{ sendChunk(player, API.chunks.chunkAt(server, xChunkNow-server.viewDistance+j, zChunkNow+j), xChunkNow-server.viewDistance+j, zChunkNow+j) }
 		
 		for(let j=0; j<server.viewDistance; j++)
-		{ sendChunk(player, chunk, xChunkNow+j, zChunkNow+server.viewDistance-j) }
+		{ sendChunk(player, API.chunks.chunkAt(server, xChunkNow+j, zChunkNow+server.viewDistance-j), xChunkNow+j, zChunkNow+server.viewDistance-j) }
 		
 		updateViewPosition(player, xChunkNow, zChunkNow)
 	}
 	
 	if(zChunkLast > zChunkNow)
 	{
-		let chunk = API.chunks.createExampleChunk(server, server.libraries['minecraft-data'].blocksByName.grass_block.id, xChunkNow, zChunkNow)
+		//let chunk = API.chunks.chunkAt(server, server.libraries['minecraft-data'].blocksByName.grass_block.id, xChunkNow, zChunkNow)
 		for(let j=0; j<=server.viewDistance; j++)
-		{ sendChunk(player, chunk, xChunkNow-server.viewDistance+j, zChunkNow-j) }
+		{ sendChunk(player, API.chunks.chunkAt(server, xChunkNow-server.viewDistance+j, zChunkNow-j), xChunkNow-server.viewDistance+j, zChunkNow-j) }
 		
 		for(let j=0; j<server.viewDistance; j++)
-		{ sendChunk(player, chunk, xChunkNow+server.viewDistance-j, zChunkNow-j) }
+		{ sendChunk(player, API.chunks.chunkAt(server, xChunkNow+server.viewDistance-j, zChunkNow-j), xChunkNow+server.viewDistance-j, zChunkNow-j) }
 		
 		updateViewPosition(player, xChunkNow, zChunkNow)
 	}

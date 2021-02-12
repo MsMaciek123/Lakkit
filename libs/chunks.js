@@ -20,6 +20,24 @@ function id(x, z)
 	return JSON.stringify([x,z])
 }
 
+function isLoaded(server, x, z)
+{
+	return (server.chunks[id(x,z)] != undefined )
+}
+
+function chunkAt(server, x, z)
+{
+
+	if(!isLoaded(server, x, z)) server.libraries['API'].chunks.load(server, x, z)
+	return(server.chunks[id(x,z)])
+}
+
+function load(server, x, z)
+{
+	// TODO: check file
+	server.chunks[id(x,z)] = createExampleChunk(server, 0, x, z, server.seed)
+}
+
 function createExampleChunk(server, block, _x, _z, seed)
 {
 	const chunk = new server.libraries['prismarine-chunk']()
@@ -185,4 +203,8 @@ function generateXZTreeVector(){
 	__z = parseInt(Math.random()* 16)
 }
 
-module.exports = { createExampleChunk, calculateLocation, atLocation, id }   
+function setBlock(chunkx, y, z, type, data=0)
+{
+	
+}
+module.exports = { createExampleChunk, calculateLocation, atLocation, id, setBlock, isLoaded, load, chunkAt }   

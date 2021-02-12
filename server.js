@@ -99,13 +99,13 @@ class Server
 		//function addTime() { API.time.set(th, API.time.get(th) + 1) }
 		//setInterval(addTime, 1000/20)
 		
-		const id = minecraftData.blocksByName.grass_block.id
-		// create empty chunks and set up them
 		for(let x=-server.viewDistance; x<=server.viewDistance; x++)
 		{
 			for(let z=-server.viewDistance; z<=server.viewDistance; z++)
 			{
-				this.chunks[API.chunks.id(x,z)] = API.chunks.createExampleChunk(server, id, x, z)
+				//API.chunks.load(server, x, z)
+				//console.log(API.chunks)
+				API.chunks.load(server, x, z)
 			}
 		}
 		
