@@ -25,6 +25,7 @@ class Server
 		this.entities = {'player':[],'cow':[]}
 		this.chunks = {}
 		// testPlugin: require('./plugins/testPlugin')
+		this.seed = 100
 		this.plugins = {}
 		this.IP = IP
 		this.port = port

@@ -8,8 +8,8 @@ module.exports = function(server, player, packet)
 	// help function
 	function sendChunk(player, chunk, xl, zl)
 	{
-		if(server.chunks[API.chunks.id(xl, zl)] == undefined) { server.chunks[API.chunks.id(xl, zl)] = API.chunks.chunkAt(server, server.libraries['minecraft-data'].blocksByName.grass_block.id, xChunkNow, zChunkNow);}
-		chunk = API.chunks.atLocation(server, xl, zl)
+		//API.chunks.chunkAt(server, xChunkNow, zChunkNow);
+		chunk = API.chunks.chunkAt(server, xl, zl)
 		player.client.write('map_chunk', {
 			x: xl,
 			z: zl,
